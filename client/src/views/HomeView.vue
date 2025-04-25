@@ -1,92 +1,3 @@
-<script>
-import axios from 'axios';
-
-export default {
-  data() {
-    return {
-      userId: 1,
-      imageData: null,
-      file: null,
-      loading: false,
-      errorMessage: '',
-    };
-  },
-  methods: {
-    onFileChange(files) {
-      this.errorMessage = '';
-      if (files && files.length > 0) {
-        const file = files[0]; // Получаем первый файл из массива
-        if (!file.type.match('image.*')) {
-          this.errorMessage = 'Пожалуйста, выберите изображение';
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.imageData = e.target.result.split(',')[1];
-        };
-        reader.onerror = () => {
-          this.errorMessage = 'Ошибка при чтении файла';
-        };
-        reader.readAsDataURL(file);
-      } else {
-        this.imageData = null;
-      }
-    },
-
-    // остальные методы без изменений
-    async sendData() {
-      if (!this.validateInput()) return;
-
-      this.loading = true;
-      this.errorMessage = '';
-
-      try {
-        const response = await this.uploadImage();
-        this.handleSuccess(response);
-      } catch (error) {
-        this.handleError(error);
-        console.log(error)
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    validateInput() {
-      if (!this.imageData) {
-        this.errorMessage = 'Пожалуйста, выберите изображение';
-        return false;
-      }
-      return true;
-    },
-
-    async uploadImage() {
-      const payload = {
-        userId: this.userId,
-        data: this.imageData,
-      };
-
-      return await axios.post('http://localhost:8080/api/receipts', payload,{
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
-
-    handleSuccess(response) {
-      console.log('Успех:', response.data);
-      this.$toast.success('Изображение успешно отправлено');
-    },
-
-    handleError(error) {
-      console.error('Ошибка:', error);
-      this.errorMessage = 'Произошла ошибка при отправке данных';
-      this.$toast.error('Ошибка при отправке изображения');
-    },
-  },
-};
-</script>
-
 <template>
   <v-container>
     <v-row justify="center">
@@ -94,21 +5,17 @@ export default {
         <v-card class="pa-4">
           <v-card-title class="text-h5 mb-4">Загрузка изображения</v-card-title>
 
-          <v-file-input
-              v-model="file"
-              accept="image/*"
-              label="Выберите изображение"
-              prepend-icon="mdi-camera"
-              @change="onFileChange"
-              outlined
-              clearable
-          ></v-file-input>
+          <VFileInput @change="handleFileInput" />
 
-          <v-alert
-              v-if="errorMessage"
-              type="error"
+          <v-img
+              v-if="previewUrl"
+              :src="previewUrl"
               class="mb-4"
-          >
+              height="200"
+              contain
+          />
+
+          <v-alert v-if="errorMessage" type="error" class="mb-4">
             {{ errorMessage }}
           </v-alert>
 
@@ -125,9 +32,137 @@ export default {
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Snackbar -->
+    <v-snackbar
+        v-model="snackbar.show"
+        :color="snackbar.color"
+        :timeout="3000"
+        location="top right"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </v-container>
 </template>
 
-<style scoped>
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
 
+// Константы
+const API_URL = 'http://localhost:8080/api/receipts';
+
+// Состояния
+const userId = 1;
+const file = ref(null);
+const imageData = ref(null);
+const previewUrl = ref(null);
+const loading = ref(false);
+const errorMessage = ref('');
+
+// Snackbar
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success',
+});
+
+// Функции
+const handleFileInput = async (event) => {
+  resetError();
+
+  const file = event?.target?.files?.[0]; // <-- правильно достаем файл
+
+  if (!file) {
+    imageData.value = null;
+    previewUrl.value = null;
+    return;
+  }
+
+  console.log(file);
+
+  if (!file.type.startsWith('image/')) {
+    setError('Файл должен быть изображением');
+    return;
+  }
+
+  try {
+    const base64 = await readFileAsBase64(file);
+    imageData.value = base64;
+    previewUrl.value = URL.createObjectURL(file);
+  } catch {
+    setError('Ошибка при чтении файла');
+  }
+};
+
+const readFileAsBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const result = e.target?.result;
+      if (typeof result === 'string') {
+        resolve(result.split(',')[1]); // Только base64 часть
+      } else {
+        reject();
+      }
+    };
+    reader.onerror = () => reject();
+    reader.readAsDataURL(file);
+  });
+};
+
+const sendData = async () => {
+  if (!validate()) return;
+
+  loading.value = true;
+  resetError();
+
+  try {
+    const response = await uploadImage();
+    showSnackbar('Изображение успешно отправлено', 'success');
+    console.log('Ответ:', response.data);
+  } catch (err) {
+    console.error('Ошибка отправки:', err);
+    setError('Произошла ошибка при отправке');
+    showSnackbar('Ошибка при отправке изображения', 'error');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const uploadImage = () => {
+  const payload = {
+    userId,
+    data: imageData.value,
+  };
+
+  return axios.post(API_URL, payload, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+const validate = () => {
+  if (!imageData.value) {
+    setError('Пожалуйста, выберите изображение');
+    return false;
+  }
+  return true;
+};
+
+const setError = (msg) => {
+  errorMessage.value = msg;
+};
+
+const resetError = () => {
+  errorMessage.value = '';
+};
+
+const showSnackbar = (message, color = 'success') => {
+  snackbar.value.message = message;
+  snackbar.value.color = color;
+  snackbar.value.show = true;
+};
+</script>
+
+<style scoped>
 </style>
