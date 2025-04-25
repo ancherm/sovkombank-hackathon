@@ -1,11 +1,13 @@
 package ru.redcode.server.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import ru.redcode.server.constant.ServerErrorCode;
 import ru.redcode.server.dto.request.ProductRequestDto;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static ru.redcode.server.constant.ServerErrorCode.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReceiptService {
@@ -42,8 +45,10 @@ public class ReceiptService {
     private final ProductMapper productMapper;
 
 
+    @Transactional
     public List<ProductResponseDto> loadReceipt(ReceiptRequestDto receiptRequestDto) {
         Receipt receipt = receiptRepository.save(receiptMapper.toEntity(receiptRequestDto));
+        log.info("Чек с id: {} успешно сохранен", receipt.getId());
 
         String url = "http://localhost:8000/api/receipts";
 
@@ -51,15 +56,15 @@ public class ReceiptService {
                 url,
                 HttpMethod.POST,
                 new HttpEntity<>(receiptRequestDto),
-                new ParameterizedTypeReference<List<ProductRequestDto>>() {}
+                new ParameterizedTypeReference<>() {}
         );
 
-        System.out.println("Response body: " + response.getBody());
-
         List<ProductRequestDto> productList = response.getBody();
+        log.info("Получен ответ с model-service: {}", productList);
 
         User user = userRepository.getUserById(receiptRequestDto.getUserId())
                 .orElseThrow(() -> new ServerException(USER_NOT_FOUND));
+        log.info("Пользователь с id: {} найден", user.getId());
 
         List<Product> savedProducts = new ArrayList<>();
         for (ProductRequestDto dto : productList) {
@@ -69,6 +74,7 @@ public class ReceiptService {
                         newCategory.setName(dto.getCategoryName());
                         return categoryRepository.save(newCategory);
                     });
+            log.info("Категория с именем: {}", category.getName());
 
             Product product = new Product();
             product.setName(dto.getName());
@@ -78,6 +84,7 @@ public class ReceiptService {
             product.setCategory(category);
 
             savedProducts.add(productRepository.save(product));
+            log.info("Продукт с именем: {} сохранен", product.getName());
         }
 
         return savedProducts.stream()
