@@ -50,7 +50,7 @@ public class ReceiptService {
         Receipt receipt = receiptRepository.save(receiptMapper.toEntity(receiptRequestDto));
         log.info("Чек с id: {} успешно сохранен", receipt.getId());
 
-        String url = "http://localhost:8000/api/receipts";
+        String url = "http://model-service:8000/api/receipts";
 
         ResponseEntity<List<ProductRequestDto>> response = restTemplate.exchange(
                 url,
