@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+**/.venv/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -33,5 +35,5 @@ build/
 .vscode/
 
 .env*
-logs/
+**/logs/
 app.log
