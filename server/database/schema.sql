@@ -23,5 +23,6 @@ CREATE TABLE product
     price      DECIMAL(10, 2),
     category   VARCHAR(255),
 
-    FOREIGN KEY (receipt_id) REFERENCES receipt (id) ON DELETE CASCADE
+    FOREIGN KEY (receipt_id) REFERENCES receipt (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
 );

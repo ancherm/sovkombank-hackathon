@@ -14,6 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "receipt", schema = "public")
 public class Receipt {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ColumnDefault("nextval('receipt_id_seq')")
     @Column(name = "id", nullable = false)
     private Long id;
