@@ -19,5 +19,5 @@ public class ProductResponseDto implements Serializable {
     String name;
     BigDecimal price;
     @Size(max = 255)
-    String category;
+    String categoryName;
 }

@@ -14,15 +14,22 @@ CREATE TABLE receipt
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE product
+CREATE TABLE category
 (
     id         BIGSERIAL PRIMARY KEY,
-    user_id    BIGINT NOT NULL,
-    receipt_id BIGINT NOT NULL,
-    name       VARCHAR(255),
-    price      DECIMAL(10, 2),
-    category   VARCHAR(255),
+    name       VARCHAR(255)
+);
+
+CREATE TABLE product
+(
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    receipt_id  BIGINT NOT NULL,
+    name        VARCHAR(255),
+    price       DECIMAL(10, 2),
+    category_id BIGINT NOT NULL,
 
     FOREIGN KEY (receipt_id) REFERENCES receipt (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
 );

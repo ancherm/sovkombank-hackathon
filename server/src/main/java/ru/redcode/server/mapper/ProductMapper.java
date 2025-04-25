@@ -5,22 +5,23 @@ import ru.redcode.server.dto.request.ProductRequestDto;
 import ru.redcode.server.dto.response.ProductResponseDto;
 import ru.redcode.server.entity.Product;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
 public interface ProductMapper {
     @Mapping(source = "receiptId", target = "receipt.id")
     @Mapping(source = "userId", target = "user.id")
+    @Mapping(source = "categoryName", target = "category.name")
     Product toEntity(ProductRequestDto productRequestDto);
-
-    @InheritInverseConfiguration(name = "toEntity")
-    ProductRequestDto toDto(Product product);
 
     @InheritConfiguration(name = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Product partialUpdate(ProductRequestDto productRequestDto, @MappingTarget Product product);
 
-    Product toEntity(ProductResponseDto productResponseDto);
+    @Mapping(source = "category.name", target = "categoryName")
+    ProductResponseDto toDto(Product product);
 
-    ProductResponseDto toDto1(Product product);
+    List<ProductResponseDto> toDtoList(List<Product> products);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Product partialUpdate(ProductResponseDto productResponseDto, @MappingTarget Product product);
