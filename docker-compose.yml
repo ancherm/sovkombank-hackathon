@@ -17,8 +17,58 @@ services:
     networks:
       - main
 
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile-client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "8888:8888"
+    command: npm run dev
+    networks:
+      - main
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile-server
+    volumes:
+      - ./server/pom.xml:/app/pom.xml
+      - ./server/src:/app/src
+      - maven_cache:/root/.m2
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run -Dspring-boot.run.fork=false
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - main
+
+  model-service:
+    build:
+      context: ./model-service
+      dockerfile: Dockerfile-modelservice
+    volumes:
+      - ./model-service:/app
+      - pip_cache:/root/.cache/pip
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - server
+    networks:
+      - main
+
 networks:
   main:
 
 volumes:
   postgres_db_data:
+  maven_cache:
+  pip_cache:

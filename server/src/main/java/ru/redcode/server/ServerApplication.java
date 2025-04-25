@@ -10,14 +10,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ServerApplication {
 
     public static void main(String[] args) {
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(
-                dotenvEntry ->  System.setProperty(dotenvEntry.getKey(), dotenvEntry.getValue())
-        );
-
-        log.info("SPRING_DATASOURCE_URL = {}", dotenv.get("SPRING_DATASOURCE_URL"));
-        log.info("SPRING_DATASOURCE_USERNAME = {}", dotenv.get("SPRING_DATASOURCE_USERNAME"));
-        log.info("SPRING_DATASOURCE_PASSWORD = {}", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
+//        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+//        dotenv.entries().forEach(
+//                dotenvEntry ->  System.setProperty(dotenvEntry.getKey(), dotenvEntry.getValue())
+//        );
+//
+//        log.info("SPRING_DATASOURCE_URL = {}", dotenv.get("SPRING_DATASOURCE_URL"));
+//        log.info("SPRING_DATASOURCE_USERNAME = {}", dotenv.get("SPRING_DATASOURCE_USERNAME"));
+//        log.info("SPRING_DATASOURCE_PASSWORD = {}", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
 
         SpringApplication.run(ServerApplication.class, args);
     }

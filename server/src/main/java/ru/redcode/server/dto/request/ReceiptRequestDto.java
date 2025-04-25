@@ -1,5 +1,6 @@
 package ru.redcode.server.dto.request;
 
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
@@ -15,5 +16,6 @@ public class ReceiptRequestDto implements Serializable {
 
     @NotNull
     @NotBlank
+    @Lob
     String data;
 }
