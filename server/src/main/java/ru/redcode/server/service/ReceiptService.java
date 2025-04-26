@@ -3,6 +3,10 @@ package ru.redcode.server.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -105,6 +109,12 @@ public class ReceiptService {
         return savedProducts.stream()
                 .map(productMapper::toDto)
                 .toList();
+    }
+
+    public Page<Receipt> getReceipts(Long userId, String search, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "date");
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        return receiptRepository.findByUserIdAndRetailPlaceContainingIgnoreCase(userId, search, pageable);
     }
 
 }
