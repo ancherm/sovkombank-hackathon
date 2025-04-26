@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import UserProfile from "@/components/UserProfile.vue"
 import ReceiptList from "@/components/ReceiptList.vue";
+import {useRouter} from "vue-router";
+import DownloadView from "@/views/DownloadView.vue";
 
 // Данные о пользователе
 const userData = ref({
@@ -13,6 +15,13 @@ const userData = ref({
 
 
 const collapse = ref(false)
+
+const router = useRouter()
+
+// Функция перехода на другую страницу
+function goToPage(pageName) {
+  router.push({ name: pageName })
+}
 </script>
 
 <template>
@@ -20,10 +29,9 @@ const collapse = ref(false)
     <v-toolbar :collapse="collapse" title="SOVKOM-BANK">
       <template v-slot:append>
         <div class="d-flex ga-1">
-          <v-btn icon>
-            <v-icon>mdi-account</v-icon>
+          <v-btn icon @click="goToPage('download')">
+            <v-icon>mdi-download</v-icon>
           </v-btn>
-          <v-btn>ЗАГРУЗИТЬ ЧЕК</v-btn>
         </div>
       </template>
     </v-toolbar>

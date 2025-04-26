@@ -1,74 +1,7 @@
-<template>
-  <!-- Toolbar -->
-  <v-card>
-    <v-toolbar :collapse="collapse" title="SOVKOM-BANK">
-      <template v-slot:append>
-        <div class="d-flex ga-1">
-          <v-btn icon>
-          <v-icon>mdi-account</v-icon>  <!-- Иконка "пользователь" -->
-          </v-btn>
-
-          <v-btn icon>
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </div>
-      </template>
-    </v-toolbar>
-
-  </v-card>
-
-  <!-- Upload Form -->
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="12" sm="8" md="6">
-        <v-card class="pa-4">
-          <v-card-title class="text-h5 mb-4">
-            Загрузка изображения
-          </v-card-title>
-
-          <VFileInput @change="handleFileInput" />
-
-          <v-img
-              v-if="previewUrl"
-              :src="previewUrl"
-              class="mb-4"
-              height="200"
-              contain
-          />
-
-          <v-alert v-if="errorMessage" type="error" class="mb-4">
-            {{ errorMessage }}
-          </v-alert>
-
-          <v-btn
-              color="primary"
-              :loading="loading"
-              :disabled="!imageData"
-              @click="sendData"
-              block
-          >
-            <v-icon left>mdi-send</v-icon>
-            Отправить
-          </v-btn>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
-
-  <!-- Snackbar -->
-  <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-      location="top right"
-  >
-    {{ snackbar.message }}
-  </v-snackbar>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import {useRouter} from "vue-router";
 
 // Константы
 const API_URL = 'http://localhost:8080/api/receipts';
@@ -183,7 +116,78 @@ const showSnackbar = (message, color = 'success') => {
   snackbar.value.color = color;
   snackbar.value.show = true;
 };
+
+const router = useRouter()
+
+// Функция перехода на другую страницу
+function goToPage(pageName) {
+  router.push({ name: pageName })
+}
 </script>
+
+<template>
+  <!-- Toolbar -->
+  <v-card>
+    <v-toolbar :collapse="collapse" title="SOVKOM-BANK">
+      <template v-slot:append>
+        <div class="d-flex ga-1">
+          <v-btn icon @click="goToPage('user')">
+            <v-icon>mdi-account</v-icon>  <!-- Иконка "пользователь" -->
+          </v-btn>
+        </div>
+      </template>
+    </v-toolbar>
+
+  </v-card>
+
+  <!-- Upload Form -->
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+        <v-card class="pa-4">
+          <v-card-title class="text-h5 mb-4">
+            Загрузка изображения
+          </v-card-title>
+
+          <VFileInput @change="handleFileInput" />
+
+          <v-img
+              v-if="previewUrl"
+              :src="previewUrl"
+              class="mb-4"
+              height="200"
+              contain
+          />
+
+          <v-alert v-if="errorMessage" type="error" class="mb-4">
+            {{ errorMessage }}
+          </v-alert>
+
+          <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="!imageData"
+              @click="sendData"
+              block
+          >
+            <v-icon left>mdi-send</v-icon>
+            Отправить
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+
+  <!-- Snackbar -->
+  <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="3000"
+      location="top right"
+  >
+    {{ snackbar.message }}
+  </v-snackbar>
+</template>
 
 <style scoped>
 </style>
