@@ -26,15 +26,6 @@ function toggleEdit() {
               <v-icon start class="me-2">mdi-account</v-icon>
               Профиль пользователя
             </div>
-            <v-btn
-                color="primary"
-                variant="flat"
-                @click="toggleEdit"
-                size="small"
-            >
-              <v-icon start>{{ editMode ? 'mdi-close' : 'mdi-pencil' }}</v-icon>
-              {{ editMode ? 'Отмена' : 'Редактировать' }}
-            </v-btn>
           </v-card-title>
 
           <v-divider class="my-4"></v-divider>
@@ -44,7 +35,7 @@ function toggleEdit() {
               <v-img :src="props.user.avatar" alt="User avatar" />
             </v-avatar>
 
-            <div class="text-h5 mb-2">{{ props.user.name }}</div>
+            <div class="text-h5 mb-2">{{ props.user.username }}</div>
             <div class="text-body-2 mb-4">{{ props.user.email }}</div>
           </v-card-text>
         </v-card>
