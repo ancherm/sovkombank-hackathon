@@ -33,7 +33,6 @@ const collapse = ref(false)
 
 const router = useRouter()
 
-// Функция перехода на другую страницу
 function goToPage(pageName) {
   router.push({ name: pageName })
 }
