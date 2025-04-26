@@ -1,5 +1,4 @@
-import src.internal.scan_receipt
-from src.internal.scan_receipt import scan_rec
+from src.services.scan_receipt import scan_rec
 
 
 def getReceipt():
