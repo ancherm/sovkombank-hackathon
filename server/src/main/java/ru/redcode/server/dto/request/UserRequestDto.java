@@ -12,12 +12,14 @@ import java.io.Serializable;
  */
 @Value
 public class UserRequestDto implements Serializable {
-    @NotNull
-    @Size(max = 255)
+
     @NotBlank
     String username;
-    @NotNull
-    @Size(max = 255)
+
     @NotBlank
     String password;
+
+    @NotBlank
+    String userType;
+
 }

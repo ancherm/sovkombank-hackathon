@@ -37,3 +37,4 @@ build/
 .env*
 **/logs/
 app.log
+model-service/model-service.iml

@@ -12,7 +12,7 @@ import ru.redcode.server.exception.ServerException;
 
 @Slf4j
 @Tag(name = "Обработчик исключений")
-//@RestControllerAdvice
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 

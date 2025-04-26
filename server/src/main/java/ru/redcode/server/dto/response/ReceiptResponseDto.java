@@ -10,9 +10,11 @@ import java.io.Serializable;
  */
 @Value
 public class ReceiptResponseDto implements Serializable {
+
     Long id;
-    @NotNull
+
     UserResponseDto user;
-    @NotNull
+
     String data;
+
 }

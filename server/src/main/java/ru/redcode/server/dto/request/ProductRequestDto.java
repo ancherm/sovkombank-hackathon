@@ -3,7 +3,6 @@ package ru.redcode.server.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
-import org.hibernate.query.SelectionQuery;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -24,10 +23,10 @@ public class ProductRequestDto implements Serializable {
     @Size(max = 255)
     String name;
 
-    @JsonProperty("price")
+    @JsonProperty("total")
     BigDecimal price;
 
-    @JsonProperty("categoryName")
-    String categoryName;
+    @JsonProperty("category")
+    String category;
 
 }
