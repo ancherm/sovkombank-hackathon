@@ -5,12 +5,12 @@ const routes = [
         component: () => import('@/views/HomeView.vue'),
         meta: { title: 'Главная' }
     },
-    // {
-    //     path: '/login',
-    //     name: 'login',
-    //     component: () => import('@/views/Auth/LoginView.vue'),
-    //     meta: { guestOnly: true }
-    // },
+    {
+        path: '/user',
+        name: 'user',
+        component: () => import('@/views/UserView.vue'),
+        meta: { title: 'Пользователь' }
+    },
 ];
 
 export default routes;

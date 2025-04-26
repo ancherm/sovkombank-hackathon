@@ -1,9 +1,30 @@
 <template>
+  <!-- Toolbar -->
+  <v-card>
+    <v-toolbar :collapse="collapse" title="SOVKOM-BANK">
+      <template v-slot:append>
+        <div class="d-flex ga-1">
+          <v-btn icon>
+          <v-icon>mdi-account</v-icon>  <!-- Иконка "пользователь" -->
+          </v-btn>
+
+          <v-btn icon>
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </div>
+      </template>
+    </v-toolbar>
+
+  </v-card>
+
+  <!-- Upload Form -->
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6">
         <v-card class="pa-4">
-          <v-card-title class="text-h5 mb-4">Загрузка изображения</v-card-title>
+          <v-card-title class="text-h5 mb-4">
+            Загрузка изображения
+          </v-card-title>
 
           <VFileInput @change="handleFileInput" />
 
@@ -32,17 +53,17 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- Snackbar -->
-    <v-snackbar
-        v-model="snackbar.show"
-        :color="snackbar.color"
-        :timeout="3000"
-        location="top right"
-    >
-      {{ snackbar.message }}
-    </v-snackbar>
   </v-container>
+
+  <!-- Snackbar -->
+  <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="3000"
+      location="top right"
+  >
+    {{ snackbar.message }}
+  </v-snackbar>
 </template>
 
 <script setup>
