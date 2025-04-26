@@ -50,7 +50,7 @@ public class ReceiptService {
         Receipt receipt = receiptRepository.save(receiptMapper.toEntity(receiptRequestDto));
         log.info("Чек с id: {} успешно сохранен", receipt.getId());
 
-        String url = "http://model-service:8000/api/receipts";
+        String url = "http://localhost:8000/api/receipts";
 
         ResponseEntity<List<ProductRequestDto>> response = restTemplate.exchange(
                 url,
@@ -74,7 +74,7 @@ public class ReceiptService {
                         newCategory.setName(dto.getCategoryName());
                         return categoryRepository.save(newCategory);
                     });
-            log.info("Категория с именем: {}", category.getName());
+            log.info("Категория с названием: {}", category.getName());
 
             Product product = new Product();
             product.setName(dto.getName());
@@ -84,7 +84,7 @@ public class ReceiptService {
             product.setCategory(category);
 
             savedProducts.add(productRepository.save(product));
-            log.info("Продукт с именем: {} сохранен", product.getName());
+            log.info("Продукт с названием: {} сохранен", product.getName());
         }
 
         return savedProducts.stream()
