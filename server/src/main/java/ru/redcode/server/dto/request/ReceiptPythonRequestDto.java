@@ -1,5 +1,7 @@
 package ru.redcode.server.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,10 +17,11 @@ public class ReceiptPythonRequestDto {
     @NotBlank
     String retailPlace;
 
-    @Positive
-    BigDecimal totalSum;
-
     LocalDateTime date;
+
+    @Positive
+    @JsonProperty("total_sum")
+    BigDecimal total;
 
     @NotNull
     List<ProductRequestDto> items;

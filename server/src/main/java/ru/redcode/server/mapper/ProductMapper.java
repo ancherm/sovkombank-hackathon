@@ -9,8 +9,8 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
 public interface ProductMapper {
-    @Mapping(source = "receiptId", target = "receipt.id")
-    @Mapping(source = "userId", target = "user.id")
+//    @Mapping(source = "receiptId", target = "receipt.id")
+//    @Mapping(source = "userId", target = "user.id")
     @Mapping(source = "category", target = "category.name")
     Product toEntity(ProductRequestDto productRequestDto);
 

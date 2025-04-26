@@ -13,20 +13,12 @@ public interface ReceiptMapper {
     @Mapping(source = "userId", target = "user.id")
     Receipt toEntity(ReceiptRequestDto receiptRequestDto);
 
-    @InheritInverseConfiguration(name = "toEntity")
-    ReceiptRequestDto toDto(Receipt receipt);
-
     @InheritConfiguration(name = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Receipt partialUpdate(ReceiptRequestDto receiptRequestDto, @MappingTarget Receipt receipt);
 
-    Receipt toEntity(ReceiptResponseDto receiptResponseDto);
-
-    ReceiptResponseDto toDto1(Receipt receipt);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Receipt partialUpdate(ReceiptResponseDto receiptResponseDto, @MappingTarget Receipt receipt);
-
+    @Mapping(source = "user.id", target = "user")
+    ReceiptResponseDto toDto(Receipt receipt);
 
     Receipt toEntity(ReceiptPythonRequestDto receiptPythonRequestDto);
 }

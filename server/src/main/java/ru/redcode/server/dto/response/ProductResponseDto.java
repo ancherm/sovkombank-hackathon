@@ -19,6 +19,12 @@ public class ProductResponseDto implements Serializable {
 
     BigDecimal price;
 
+    Float quantity;
+
+    BigDecimal total;
+
     String categoryName;
+
+
 
 }
