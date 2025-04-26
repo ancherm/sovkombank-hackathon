@@ -47,7 +47,7 @@ public class ReceiptService {
 
     @Transactional
     public List<ProductResponseDto> loadReceipt(ReceiptRequestDto receiptRequestDto) {
-        Receipt receipt = receiptRepository.save(receiptMapper.toEntity(receiptRequestDto));
+        Receipt receipt = receiptMapper.toEntity(receiptRequestDto);
         log.info("Чек с id: {} успешно сохранен", receipt.getId());
 
         String url = "http://localhost:8000/api/receipts";
