@@ -15,8 +15,8 @@ export async function apiGetReceipts(page = 1, itemsPerPage = 10, searchQuery = 
         totalSum: 500 + i * 10,
         userId: userId,  // Используем userId
         items: [
-            { name: 'Товар A', quantity: 1, price: 100 },
-            { name: 'Товар B', quantity: 2, price: 150 },
+            { name: 'Товар A', quantity: 1, price: 100, category: 'SNEKI' },
+            { name: 'Товар B', quantity: 2, price: 150, category: 'SNEKI' },
         ],
     }));
 

@@ -1,18 +1,17 @@
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
+import ReceiptComponent from "@/components/ReceiptComponent.vue";
+import {uploadImage} from "@/api/endpoins/receipts.post.api.js";
 
 // Константы
-const API_URL = 'http://localhost:8080/api/receipts';
-
-// Состояния
 const userId = 1;
 const file = ref(null);
 const imageData = ref(null);
 const previewUrl = ref(null);
 const loading = ref(false);
 const errorMessage = ref('');
+let receiptData = ref();
 
 // Snackbar
 const snackbar = ref({
@@ -25,7 +24,7 @@ const snackbar = ref({
 const handleFileInput = async (event) => {
   resetError();
 
-  const file = event?.target?.files?.[0]; // <-- правильно достаем файл
+  const file = event?.target?.files?.[0];
 
   if (!file) {
     imageData.value = null;
@@ -55,7 +54,7 @@ const readFileAsBase64 = (file) => {
     reader.onload = e => {
       const result = e.target?.result;
       if (typeof result === 'string') {
-        resolve(result.split(',')[1]); // Только base64 часть
+        resolve(result.split(',')[1]);
       } else {
         reject();
       }
@@ -72,9 +71,9 @@ const sendData = async () => {
   resetError();
 
   try {
-    const response = await uploadImage();
+    const response = await uploadImage(userId, imageData.value);
     showSnackbar('Изображение успешно отправлено', 'success');
-    console.log('Ответ:', response.data);
+    receiptData = response
   } catch (err) {
     console.error('Ошибка отправки:', err);
     setError('Произошла ошибка при отправке');
@@ -82,17 +81,6 @@ const sendData = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const uploadImage = () => {
-  const payload = {
-    userId,
-    data: imageData.value,
-  };
-
-  return axios.post(API_URL, payload, {
-    headers: { 'Content-Type': 'application/json' },
-  });
 };
 
 const validate = () => {
@@ -119,9 +107,8 @@ const showSnackbar = (message, color = 'success') => {
 
 const router = useRouter()
 
-// Функция перехода на другую страницу
 function goToPage(pageName) {
-  router.push({ name: pageName })
+  router.push({name: pageName})
 }
 </script>
 
@@ -137,7 +124,6 @@ function goToPage(pageName) {
         </div>
       </template>
     </v-toolbar>
-
   </v-card>
 
   <!-- Upload Form -->
@@ -149,7 +135,7 @@ function goToPage(pageName) {
             Загрузка изображения
           </v-card-title>
 
-          <VFileInput @change="handleFileInput" />
+          <VFileInput @change="handleFileInput"/>
 
           <v-img
               v-if="previewUrl"
@@ -178,6 +164,10 @@ function goToPage(pageName) {
     </v-row>
   </v-container>
 
+  <v-container>
+    <ReceiptComponent :receipt-data="receiptData"/>
+  </v-container>
+
   <!-- Snackbar -->
   <v-snackbar
       v-model="snackbar.show"
@@ -188,6 +178,3 @@ function goToPage(pageName) {
     {{ snackbar.message }}
   </v-snackbar>
 </template>
-
-<style scoped>
-</style>

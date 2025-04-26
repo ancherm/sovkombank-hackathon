@@ -1,24 +1,38 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import UserProfile from "@/components/UserProfile.vue"
 import ReceiptList from "@/components/ReceiptList.vue";
 import {useRouter} from "vue-router";
 import DownloadView from "@/views/DownloadView.vue";
+import {apiGetUser} from "@/api/endpoins/user.get.api.js";
 
-// Данные о пользователе
 const userData = ref({
-  name: 'Иван Иванов',
-  email: 'ivan.ivanov@example.com',
-  avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+  username: '',
+  avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
 })
 
+async function loadUserData(userId) {
+  try {
+    const user = await apiGetUser(userId);
+    console.log("API RESPONSE", user)
+    userData.value = {
+      username: user.username,
+      avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
+    };
+  } catch (error) {
+    console.error('Ошибка при загрузке данных пользователя:', error);
+  }
+}
+
+onMounted(() => {
+  loadUserData(1);
+});
 
 
 const collapse = ref(false)
 
 const router = useRouter()
 
-// Функция перехода на другую страницу
 function goToPage(pageName) {
   router.push({ name: pageName })
 }

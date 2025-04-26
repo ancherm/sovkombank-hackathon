@@ -76,7 +76,7 @@ function downloadImage() {
               <v-list-item-content>
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
                 <v-list-item-subtitle>
-                  Количество: {{ item.quantity }} | Цена: {{ item.price }} ₽
+                  Количество: {{ item.quantity }} | Цена: {{ item.price }} | Категория: {{ item.category }}₽
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
