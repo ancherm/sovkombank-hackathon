@@ -26,7 +26,7 @@ public class ReceiptController {
     private final ReceiptService receiptService;
 
     @PostMapping
-    public ResponseEntity<List<ProductResponseDto>> loadReceipt(@RequestBody @Valid ReceiptRequestDto requestDto) {
+    public ResponseEntity<ReceiptResponseDto> loadReceipt(@RequestBody @Valid ReceiptRequestDto requestDto) {
         log.info("Запрос на загрузку чека от пользователя с id: {}", requestDto.getUserId());
         return ResponseEntity.ok(receiptService.loadReceipt(requestDto));
     }

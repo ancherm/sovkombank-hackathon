@@ -19,6 +19,7 @@ import ru.redcode.server.dto.request.ProductRequestDto;
 import ru.redcode.server.dto.request.ReceiptPythonRequestDto;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
 import ru.redcode.server.dto.response.ProductResponseDto;
+import ru.redcode.server.dto.response.ReceiptResponseDto;
 import ru.redcode.server.entity.Category;
 import ru.redcode.server.entity.Product;
 import ru.redcode.server.entity.Receipt;
@@ -52,7 +53,7 @@ public class ReceiptService {
 
 
     @Transactional
-    public List<ProductResponseDto> loadReceipt(ReceiptRequestDto receiptRequestDto) {
+    public ReceiptResponseDto loadReceipt(ReceiptRequestDto receiptRequestDto) {
         User user = userRepository.getUserById(receiptRequestDto.getUserId())
                 .orElseThrow(() -> new ServerException(USER_NOT_FOUND));
         log.info("Пользователь с id: {} найден", user.getId());
@@ -78,7 +79,7 @@ public class ReceiptService {
         }
 
         receipt.setDate(receiptPythonRequestDto.getDate());
-        receipt.setTotalSum(receiptPythonRequestDto.getTotalSum());
+        receipt.setTotalSum(receiptPythonRequestDto.getTotal());
         receipt.setRetailPlace(receiptPythonRequestDto.getRetailPlace());
 
         Receipt savedReceipt = receiptRepository.save(receipt);
@@ -95,20 +96,26 @@ public class ReceiptService {
             log.info("Категория с названием: {}", category.getName());
 
             Product product = productMapper.toEntity(productRequestDto);
-//            Product product = new Product();
-//            product.setName(dto.getName());
-//            product.setPrice(dto.getPrice());
-//            product.setUser(user);
-//            product.setReceipt(receipt);
-//            product.setCategory(category);
+            product.setCategory(category);
+
+            product.setReceipt(savedReceipt);
+            product.setUser(user);
 
             savedProducts.add(productRepository.save(product));
             log.info("Продукт с названием: {} сохранен", product.getName());
         }
 
-        return savedProducts.stream()
-                .map(productMapper::toDto)
-                .toList();
+        List<ProductResponseDto> itemDtos = productMapper.toDtoList(savedProducts);
+
+        return new ReceiptResponseDto(
+                savedReceipt.getId(),
+                savedReceipt.getRetailPlace(),
+                savedReceipt.getData(),
+                savedReceipt.getDate(),
+                savedReceipt.getTotalSum(),
+                user.getId(),
+                itemDtos
+        );
     }
 
     public Page<Receipt> getReceipts(Long userId, String search, int page, int size) {

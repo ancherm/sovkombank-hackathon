@@ -14,18 +14,14 @@ import java.math.BigDecimal;
 @Value
 public class ProductRequestDto implements Serializable {
 
-
-    @JsonProperty("userId")
-    Long userId;
+    @JsonProperty("name")
+    String name;
 
     @JsonProperty("receiptId")
     Long receiptId;
 
-    @JsonProperty("name")
-    String name;
-
     @Min(0)
-    @JsonProperty("total")
+    @JsonProperty("price")
     BigDecimal price;
 
     @Min(0)
