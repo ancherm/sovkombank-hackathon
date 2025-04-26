@@ -1,6 +1,7 @@
 package ru.redcode.server.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Value
 public class ProductRequestDto implements Serializable {
 
+
     @JsonProperty("userId")
     Long userId;
 
@@ -20,11 +22,19 @@ public class ProductRequestDto implements Serializable {
     Long receiptId;
 
     @JsonProperty("name")
-    @Size(max = 255)
     String name;
 
+    @Min(0)
     @JsonProperty("total")
     BigDecimal price;
+
+    @Min(0)
+    @JsonProperty("quantity")
+    Float quantity;
+
+    @Min(0)
+    @JsonProperty("total")
+    BigDecimal total;
 
     @JsonProperty("category")
     String category;

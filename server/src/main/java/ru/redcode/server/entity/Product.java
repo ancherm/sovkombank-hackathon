@@ -41,6 +41,10 @@ public class Product {
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
+    private Float quantity;
+
+    private BigDecimal total;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

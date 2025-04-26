@@ -31,6 +31,8 @@ CREATE TABLE product
     receipt_id  BIGINT NOT NULL,
     name        VARCHAR(255),
     price       DECIMAL(10, 2),
+    quantity    FLOAT  NOT NULL,
+    total       DECIMAL(10, 2),
     category_id BIGINT NOT NULL,
 
     FOREIGN KEY (receipt_id) REFERENCES receipt (id) ON DELETE CASCADE,
