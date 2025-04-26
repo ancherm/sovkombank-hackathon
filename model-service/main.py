@@ -47,20 +47,16 @@ async def load_receipt(request: ReceiptRequest):
             "inn": receipt_data.inn,
             "date": receipt_data.date.isoformat(),  # datetime в строку
             "total_sum": receipt_data.total_sum,
-            "address": receipt_data.address,
             "items": [
                 {
                     "name": item.name,
                     "price": item.price,
                     "quantity": item.quantity,
                     "total": item.total,
-                    "nds": item.nds,
                     "category": item.category
                 }
                 for item in receipt_data.items
             ],
-            "fiscal_document_number": receipt_data.fiscal_document_number,
-            "fiscal_sign": receipt_data.fiscal_sign
         }
 
     except Exception as e:
