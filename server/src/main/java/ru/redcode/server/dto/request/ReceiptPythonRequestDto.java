@@ -6,18 +6,21 @@ import jakarta.validation.constraints.Positive;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Value
 public class ReceiptPythonRequestDto {
 
     @NotBlank
-    String storeName;
+    String retailPlace;
 
     @Positive
     BigDecimal totalSum;
 
+    LocalDateTime date;
+
     @NotNull
-    List<ProductRequestDto> products;
+    List<ProductRequestDto> items;
 
 }

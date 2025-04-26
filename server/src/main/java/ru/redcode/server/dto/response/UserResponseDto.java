@@ -9,6 +9,11 @@ import java.io.Serializable;
  */
 @Value
 public class UserResponseDto implements Serializable {
+
     Long id;
+
     String username;
+
+    String userType;
+
 }

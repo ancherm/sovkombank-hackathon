@@ -1,6 +1,7 @@
 package ru.redcode.server.mapper;
 
 import org.mapstruct.*;
+import ru.redcode.server.dto.request.ReceiptPythonRequestDto;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
 import ru.redcode.server.dto.response.ReceiptResponseDto;
 import ru.redcode.server.entity.Receipt;
@@ -25,4 +26,7 @@ public interface ReceiptMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Receipt partialUpdate(ReceiptResponseDto receiptResponseDto, @MappingTarget Receipt receipt);
+
+
+    Receipt toEntity(ReceiptPythonRequestDto receiptPythonRequestDto);
 }

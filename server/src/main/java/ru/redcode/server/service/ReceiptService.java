@@ -8,9 +8,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.redcode.server.constant.ServerErrorCode;
 import ru.redcode.server.dto.request.ProductRequestDto;
+import ru.redcode.server.dto.request.ReceiptPythonRequestDto;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
 import ru.redcode.server.dto.response.ProductResponseDto;
 import ru.redcode.server.entity.Category;
@@ -47,41 +49,54 @@ public class ReceiptService {
 
     @Transactional
     public List<ProductResponseDto> loadReceipt(ReceiptRequestDto receiptRequestDto) {
-        Receipt receipt = receiptMapper.toEntity(receiptRequestDto);
-        log.info("Чек с id: {} успешно сохранен", receipt.getId());
-
-        String url = "http://localhost:8000/api/receipts";
-
-        ResponseEntity<List<ProductRequestDto>> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(receiptRequestDto),
-                new ParameterizedTypeReference<>() {}
-        );
-
-        List<ProductRequestDto> productList = response.getBody();
-        log.info("Получен ответ с model-service: {}", productList);
-
         User user = userRepository.getUserById(receiptRequestDto.getUserId())
                 .orElseThrow(() -> new ServerException(USER_NOT_FOUND));
         log.info("Пользователь с id: {} найден", user.getId());
 
+        Receipt receipt = receiptMapper.toEntity(receiptRequestDto);
+
+        String url = "http://localhost:8000/api/receipts";
+        ResponseEntity<ReceiptPythonRequestDto> response;
+        ReceiptPythonRequestDto receiptPythonRequestDto;
+
+        try {
+            response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    new HttpEntity<>(receiptRequestDto),
+                    ReceiptPythonRequestDto.class
+            );
+
+            receiptPythonRequestDto = response.getBody();
+            log.info("Получен ответ с model-service: {}", receiptPythonRequestDto);
+        } catch (HttpServerErrorException.InternalServerError ex) {
+            throw new ServerException(RECEIPT_LOAD_EXCEPTION);
+        }
+
+        receipt.setDate(receiptPythonRequestDto.getDate());
+        receipt.setTotalSum(receiptPythonRequestDto.getTotalSum());
+        receipt.setRetailPlace(receiptPythonRequestDto.getRetailPlace());
+
+        Receipt savedReceipt = receiptRepository.save(receipt);
+        log.info("Чек с id: {} успешно сохранен", savedReceipt.getId());
+
         List<Product> savedProducts = new ArrayList<>();
-        for (ProductRequestDto dto : productList) {
-            Category category = categoryRepository.findByName(dto.getCategoryName())
+        for (ProductRequestDto productRequestDto : receiptPythonRequestDto.getItems()) {
+            Category category = categoryRepository.findByName(productRequestDto.getCategory())
                     .orElseGet(() -> {
                         Category newCategory = new Category();
-                        newCategory.setName(dto.getCategoryName());
+                        newCategory.setName(productRequestDto.getCategory());
                         return categoryRepository.save(newCategory);
                     });
             log.info("Категория с названием: {}", category.getName());
 
-            Product product = new Product();
-            product.setName(dto.getName());
-            product.setPrice(dto.getPrice());
-            product.setUser(user);
-            product.setReceipt(receipt);
-            product.setCategory(category);
+            Product product = productMapper.toEntity(productRequestDto);
+//            Product product = new Product();
+//            product.setName(dto.getName());
+//            product.setPrice(dto.getPrice());
+//            product.setUser(user);
+//            product.setReceipt(receipt);
+//            product.setCategory(category);
 
             savedProducts.add(productRepository.save(product));
             log.info("Продукт с названием: {} сохранен", product.getName());

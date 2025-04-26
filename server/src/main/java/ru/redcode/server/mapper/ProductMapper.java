@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProductMapper {
     @Mapping(source = "receiptId", target = "receipt.id")
     @Mapping(source = "userId", target = "user.id")
-    @Mapping(source = "categoryName", target = "category.name")
+    @Mapping(source = "category", target = "category.name")
     Product toEntity(ProductRequestDto productRequestDto);
 
     @InheritConfiguration(name = "toEntity")
@@ -25,4 +25,5 @@ public interface ProductMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Product partialUpdate(ProductResponseDto productResponseDto, @MappingTarget Product product);
+
 }

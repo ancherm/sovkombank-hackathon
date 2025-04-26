@@ -9,12 +9,9 @@ public enum ServerErrorCode {
 
     VALIDATION_ERROR("Ошибка валидации", ""),
     ILLEGAL_ACTION("Недопустимое действие", ""),
-
-//    AlreadyExist
-    LOGIN_ALREADY_EXISTS("Логин уже существует", "login"),
-
-//    NotFound
-    USER_NOT_FOUND("Пользователя не существует", "login"),
+    USERNAME_ALREADY_EXISTS("Username уже существует", "username"),
+    USER_NOT_FOUND("Пользователя не существует", "id"),
+    RECEIPT_LOAD_EXCEPTION("Ошибка при загрузке чека", "receipt")
     ;
 
     private final String message;
