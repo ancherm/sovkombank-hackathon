@@ -1,9 +1,9 @@
 const routes = [
     {
         path: '/',
-        name: 'home',
-        component: () => import('@/views/HomeView.vue'),
-        meta: { title: 'Главная' }
+        name: 'download',
+        component: () => import('@/views/DownloadView.vue'),
+        meta: { title: 'Загрузка чека' }
     },
     {
         path: '/user',
