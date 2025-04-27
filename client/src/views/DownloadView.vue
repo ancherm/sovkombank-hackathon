@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from "vue-router";
 import ReceiptComponent from "@/components/ReceiptComponent.vue";
-import {uploadImage} from "@/api/endpoins/receipts.post.api.js";
+import { uploadImage } from "@/api/endpoins/receipts.post.api.js";
 
 // Константы
 const userId = 1;
@@ -11,7 +11,7 @@ const imageData = ref(null);
 const previewUrl = ref(null);
 const loading = ref(false);
 const errorMessage = ref('');
-let receiptData = ref();
+let receiptData = ref(null);
 
 // Snackbar
 const snackbar = ref({
@@ -54,7 +54,8 @@ const readFileAsBase64 = (file) => {
     reader.onload = e => {
       const result = e.target?.result;
       if (typeof result === 'string') {
-        resolve(result.split(',')[1]);
+        const base64String = `data:${file.type};base64,${result.split(',')[1]}`;
+        resolve(base64String); // Возвращаем полный base64
       } else {
         reject();
       }
@@ -71,9 +72,17 @@ const sendData = async () => {
   resetError();
 
   try {
+    console.log(imageData.value);
+    receiptData.value = null
     const response = await uploadImage(userId, imageData.value);
     showSnackbar('Изображение успешно отправлено', 'success');
-    receiptData = response
+
+    // Теперь обновляем реактивную переменную receiptData
+    receiptData.value = response;
+
+    // Очищаем input после успешной отправки
+    imageData.value = null;
+    previewUrl.value = null;  // Очищаем превью
   } catch (err) {
     console.error('Ошибка отправки:', err);
     setError('Произошла ошибка при отправке');
@@ -108,14 +117,14 @@ const showSnackbar = (message, color = 'success') => {
 const router = useRouter()
 
 function goToPage(pageName) {
-  router.push({name: pageName})
+  router.push({ name: pageName })
 }
 </script>
 
 <template>
   <!-- Toolbar -->
   <v-card>
-    <v-toolbar :collapse="collapse" title="SOVKOM-BANK">
+    <v-toolbar :collapse="false" title="SOVKOM-BANK">
       <template v-slot:append>
         <div class="d-flex ga-1">
           <v-btn icon @click="goToPage('user')">
@@ -164,8 +173,9 @@ function goToPage(pageName) {
     </v-row>
   </v-container>
 
+  <!-- Отображение компонента ReceiptComponent только если данные есть -->
   <v-container>
-    <ReceiptComponent :receipt-data="receiptData"/>
+    <ReceiptComponent v-if="receiptData" :receipt-data="receiptData"/>
   </v-container>
 
   <!-- Snackbar -->
@@ -178,3 +188,6 @@ function goToPage(pageName) {
     {{ snackbar.message }}
   </v-snackbar>
 </template>
+
+
+
