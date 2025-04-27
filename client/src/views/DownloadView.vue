@@ -4,8 +4,7 @@ import { useRouter } from "vue-router";
 import ReceiptComponent from "@/components/ReceiptComponent.vue";
 import { uploadImage } from "@/api/endpoins/receipts.post.api.js";
 
-// Константы
-const userId = 1;
+const userId = localStorage.getItem('userId')
 const file = ref(null);
 const imageData = ref(null);
 const previewUrl = ref(null);

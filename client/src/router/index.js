@@ -6,22 +6,18 @@ const router = createRouter({
     routes,
 });
 
-// router.beforeEach(async (to, from, next) => {
-//     const {useAuthStore} = await import('@/stores/auth.store');
-//     const authStore = useAuthStore();
-//
-//     // Проверяем требует ли роут аутентификации
-//     if (to.meta.requiresAuth) {
-//         if (authStore.isAuthenticated) {
-//             next();
-//         } else {
-//             next({name: 'login', query: {redirect: to.fullPath}});
-//         }
-//     }
-//     // Все остальные случаи
-//     else {
-//         next();
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    const userId = localStorage.getItem('userId');
+
+    if (to.meta.requiresAuth) {
+        if (!userId) {
+            next({ name: 'login', query: { redirect: to.fullPath } });
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
 
 export default router;
