@@ -5,8 +5,10 @@ import ReceiptList from "@/components/ReceiptList.vue";
 import {useRouter} from "vue-router";
 import DownloadView from "@/views/DownloadView.vue";
 import {apiGetUser} from "@/api/endpoins/user.get.api.js";
+import StatisticsComponent from "@/components/StatisticsComponent.vue";
 
 const userData = ref({
+  userId: 1,
   username: '',
   avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
 })
@@ -25,7 +27,7 @@ async function loadUserData(userId) {
 }
 
 onMounted(() => {
-  loadUserData(1);
+  loadUserData(userData.userId);
 });
 
 
@@ -54,10 +56,10 @@ function goToPage(pageName) {
   <v-container class="py-10 custom-container">
     <v-row>
       <!-- Левая колонка -->
-      <v-col cols="5">
-        <UserProfile :user="userData"/>
+      <v-col cols="12" md="5" class="d-flex flex-column">
+        <UserProfile :user="userData" class="mb-8"/>
+        <StatisticsComponent :user="userData"/>
       </v-col>
-
       <!-- Правая колонка -->
       <v-col cols="7">
         <ReceiptList :items-per-page="10" :userId="123" />
