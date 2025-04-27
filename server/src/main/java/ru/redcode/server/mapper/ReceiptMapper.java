@@ -6,6 +6,8 @@ import ru.redcode.server.dto.request.ReceiptRequestDto;
 import ru.redcode.server.dto.response.ReceiptResponseDto;
 import ru.redcode.server.entity.Receipt;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
 public interface ReceiptMapper {
 //    @Mapping(source = "userPasswordHash", target = "user.passwordHash")
@@ -21,4 +23,6 @@ public interface ReceiptMapper {
     ReceiptResponseDto toDto(Receipt receipt);
 
     Receipt toEntity(ReceiptPythonRequestDto receiptPythonRequestDto);
+
+    List<ReceiptResponseDto> toDtoList(List<Receipt> receipts);
 }

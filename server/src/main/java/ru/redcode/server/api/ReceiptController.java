@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,22 +33,10 @@ public class ReceiptController {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> listReceipts(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "") String searchQuery,
-            @RequestParam Long userId
-    ) {
-        Page<Receipt> pageResult = receiptService.getReceipts(userId, searchQuery, page, size);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("receipts", pageResult.getContent());
-        response.put("pagination", Map.of(
-                "currentPage", pageResult.getNumber() + 1,
-                "totalPages", pageResult.getTotalPages(),
-                "totalReceipts", pageResult.getTotalElements()
-        ));
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<ReceiptResponseDto>> listReceipts(@RequestParam Long userId) {
+        if (userId < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(receiptService.getAllReceipts(userId));
     }
 }

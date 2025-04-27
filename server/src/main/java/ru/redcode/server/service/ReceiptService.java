@@ -118,10 +118,9 @@ public class ReceiptService {
         );
     }
 
-    public Page<Receipt> getReceipts(Long userId, String search, int page, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "date");
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return receiptRepository.findByUserIdAndRetailPlaceContainingIgnoreCase(userId, search, pageable);
+    @Transactional
+    public List<ReceiptResponseDto> getAllReceipts(Long userId) {
+        return receiptMapper.toDtoList(receiptRepository.findAllByUserId(userId));
     }
 
 }
