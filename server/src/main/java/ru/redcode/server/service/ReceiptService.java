@@ -125,8 +125,15 @@ public class ReceiptService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ReceiptResponseDto> getAllReceipts(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
+        Page<Receipt> pageResult = receiptRepository.findAllByUserId(userId, pageable);
+        return pageResult.map(receiptMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
     public List<ReceiptResponseDto> getAllReceipts(Long userId) {
-        List<Receipt> receipts = receiptRepository.findAllByUserId(userId);
+        List<Receipt> receipts = receiptRepository.findAllByUserIdOrderByDateDesc(userId);
         return receiptMapper.toDtoList(receipts);
     }
 
@@ -135,9 +142,7 @@ public class ReceiptService {
     }
 
     @Transactional(readOnly = true)
-    public PeriodSummaryResponseDto getSummaryForPeriod(Long userId,
-                                                        LocalDate start,
-                                                        LocalDate end) {
+    public PeriodSummaryResponseDto getSummaryForPeriod(Long userId, LocalDate start, LocalDate end) {
         LocalDateTime startTime = start.atStartOfDay();
         LocalDateTime endTime = end.atStartOfDay();
 
