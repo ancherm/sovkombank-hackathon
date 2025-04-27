@@ -24,5 +24,4 @@ public interface ReceiptMapper {
 
     Receipt toEntity(ReceiptPythonRequestDto receiptPythonRequestDto);
 
-    List<ReceiptResponseDto> toDtoList(List<Receipt> receipts);
 }
