@@ -1,19 +1,27 @@
 package ru.redcode.server.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
+import ru.redcode.server.dto.response.PeriodCategorySummaryResponseDto;
+import ru.redcode.server.dto.response.PeriodSummaryResponseDto;
 import ru.redcode.server.dto.response.ProductResponseDto;
 import ru.redcode.server.dto.response.ReceiptResponseDto;
 import ru.redcode.server.entity.Receipt;
 import ru.redcode.server.service.ReceiptService;
+import ru.redcode.server.utils.json.DateDeserializer;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

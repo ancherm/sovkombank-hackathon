@@ -10,8 +10,6 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
 public interface ReceiptMapper {
-//    @Mapping(source = "userPasswordHash", target = "user.passwordHash")
-//    @Mapping(source = "userUsername", target = "user.username")
     @Mapping(source = "userId", target = "user.id")
     Receipt toEntity(ReceiptRequestDto receiptRequestDto);
 
@@ -21,6 +19,8 @@ public interface ReceiptMapper {
 
     @Mapping(source = "user.id", target = "user")
     ReceiptResponseDto toDto(Receipt receipt);
+
+    List<ReceiptResponseDto> toDtoList(List<Receipt> receipts);
 
     Receipt toEntity(ReceiptPythonRequestDto receiptPythonRequestDto);
 
