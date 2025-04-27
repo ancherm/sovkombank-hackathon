@@ -1,47 +1,32 @@
 // apiGetReceipts.js
 import tmpDataImage from "@/views/consts.js"
 
-export async function apiGetReceipts(page = 1, itemsPerPage = 10, searchQuery = '', userId = 1) {
-    // Здесь добавляется логика для фильтрации или получения данных в зависимости от userId
-    const totalReceipts = 47;  // или получить количество чеков для данного userId
-    const totalPages = Math.ceil(totalReceipts / itemsPerPage);
+export async function apiGetReceipts(page = 1, size = 10, searchQuery = '', userId) {
+    try {
+        const response = await fetch(`/api/receipts?page=${page}&size=${itemsPerPage}&searchQuery=${searchQuery}&userId=${userId}`);
 
-    // Мокаем список чеков
-    const receipts = Array.from({ length: totalReceipts }, (_, i) => ({
-        id: i + 1,
-        retailPlace: `Магазин ${i + 1}`,
-        dataImage: tmpDataImage,
-        date: `2024-04-${String((25 - (i % 30))).padStart(2, '0')}`,
-        totalSum: 500 + i * 10,
-        userId: userId,  // Используем userId
-        items: [
-            { name: 'Товар A', quantity: 1, price: 100, category: 'SNEKI' },
-            { name: 'Товар B', quantity: 2, price: 150, category: 'SNEKI' },
-        ],
-    }));
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки чеков');
+        }
 
-    // Фильтруем по поисковому запросу, если он есть
-    const filteredReceipts = receipts.filter(receipt => {
-        const matchesSearch = searchQuery === '' || receipt.retailPlace.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesSearch;
-    });
+        const data = await response.json();
 
-    // Считаем откуда и докуда брать чеки
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const paginatedReceipts = filteredReceipts.slice(start, end);
+        const { receipts, totalReceipts } = data;
 
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve({
-                receipts: paginatedReceipts,
-                pagination: {
-                    currentPage: page,
-                    totalPages,
-                    totalReceipts: filteredReceipts.length
-                }
-            });
-        }, 500); // имитация задержки сети
-    });
+        const totalPages = Math.ceil(totalReceipts / itemsPerPage);
+
+        return {
+            receipts,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalReceipts
+            }
+        };
+
+    } catch (error) {
+        console.error('Ошибка при загрузке чеков:', error);
+        throw new Error('Не удалось загрузить чеки');
+    }
 }
 

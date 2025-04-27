@@ -36,14 +36,14 @@ function downloadImage() {
           <!-- Фото -->
           <v-col cols="12" md="6" class="text-center">
             <v-img
-                v-if="recData.dataImage"
-                :src="recData.dataImage"
+                v-if="recData.data"
+                :src="recData.data"
                 max-height="200"
                 contain
                 class="mb-2"
             />
             <v-btn
-                v-if="recData.dataImage"
+                v-if="recData.data"
                 color="primary"
                 @click="downloadImage"
                 size="small"
@@ -76,7 +76,7 @@ function downloadImage() {
               <v-list-item-content>
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
                 <v-list-item-subtitle>
-                  Количество: {{ item.quantity }} | Цена: {{ item.price }} | Категория: {{ item.category }}₽
+                  Количество: {{ item.quantity }} | Цена: {{ item.price }}₽| Категория: {{ item.categoryName }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
