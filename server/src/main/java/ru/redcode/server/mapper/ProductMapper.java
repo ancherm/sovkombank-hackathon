@@ -14,14 +14,15 @@ public interface ProductMapper {
     @Mapping(source = "category", target = "category.name")
     Product toEntity(ProductRequestDto productRequestDto);
 
-    @InheritConfiguration(name = "toEntity")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Product partialUpdate(ProductRequestDto productRequestDto, @MappingTarget Product product);
-
     @Mapping(source = "category.name", target = "categoryName")
+    @Mapping(source = "user",          target = "user")
     ProductResponseDto toDto(Product product);
 
     List<ProductResponseDto> toDtoList(List<Product> products);
+
+    @InheritConfiguration(name = "toEntity")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Product partialUpdate(ProductRequestDto productRequestDto, @MappingTarget Product product);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Product partialUpdate(ProductResponseDto productResponseDto, @MappingTarget Product product);

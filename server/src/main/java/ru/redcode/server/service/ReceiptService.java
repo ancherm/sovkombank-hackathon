@@ -124,16 +124,17 @@ public class ReceiptService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReceiptResponseDto> getAllReceipts(Long userId) {
-        return receiptMapper.toDtoList(receiptRepository.findAllByUserId(userId));
+        List<Receipt> receipts = receiptRepository.findAllByUserId(userId);
+        return receiptMapper.toDtoList(receipts);
     }
 
     public BigDecimal getTotalSum(Long userId) {
         return receiptRepository.sumTotalByUser(userId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PeriodSummaryResponseDto getSummaryForPeriod(Long userId,
                                                         LocalDate start,
                                                         LocalDate end) {

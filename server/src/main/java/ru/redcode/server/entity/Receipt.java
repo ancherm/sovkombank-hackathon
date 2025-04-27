@@ -12,6 +12,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -44,5 +46,8 @@ public class Receipt {
 
     @NotBlank
     private String retailPlace;
+
+    @OneToMany(mappedBy = "receipt", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Product> products = new ArrayList<>();
 
 }

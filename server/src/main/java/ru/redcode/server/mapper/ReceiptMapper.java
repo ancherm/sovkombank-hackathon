@@ -8,7 +8,7 @@ import ru.redcode.server.entity.Receipt;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class, ProductMapper.class})
 public interface ReceiptMapper {
     @Mapping(source = "userId", target = "user.id")
     Receipt toEntity(ReceiptRequestDto receiptRequestDto);
@@ -18,6 +18,7 @@ public interface ReceiptMapper {
     Receipt partialUpdate(ReceiptRequestDto receiptRequestDto, @MappingTarget Receipt receipt);
 
     @Mapping(source = "user.id", target = "user")
+    @Mapping(source = "products",   target = "items")
     ReceiptResponseDto toDto(Receipt receipt);
 
     List<ReceiptResponseDto> toDtoList(List<Receipt> receipts);

@@ -2,6 +2,7 @@ package ru.redcode.server.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,8 +18,13 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
     Page<Receipt> findByUserIdAndRetailPlaceContainingIgnoreCase(Long userId, String retailPlace, Pageable pageable);
 
-
+    @EntityGraph(attributePaths = {
+            "products",
+            "products.category",
+            "products.user"
+    })
     List<Receipt> findAllByUserId(Long userId);
+
     List<Receipt> findByUserIdAndDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT COALESCE(SUM(r.totalSum), 0) FROM Receipt r WHERE r.user.id = :userId")
