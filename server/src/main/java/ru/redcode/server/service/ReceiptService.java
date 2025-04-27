@@ -18,13 +18,13 @@ import ru.redcode.server.constant.ServerErrorCode;
 import ru.redcode.server.dto.request.ProductRequestDto;
 import ru.redcode.server.dto.request.ReceiptPythonRequestDto;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
-import ru.redcode.server.dto.response.ProductResponseDto;
-import ru.redcode.server.dto.response.ReceiptResponseDto;
+import ru.redcode.server.dto.response.*;
 import ru.redcode.server.entity.Category;
 import ru.redcode.server.entity.Product;
 import ru.redcode.server.entity.Receipt;
 import ru.redcode.server.entity.User;
 import ru.redcode.server.exception.ServerException;
+import ru.redcode.server.mapper.CategorySummaryMapper;
 import ru.redcode.server.mapper.ProductMapper;
 import ru.redcode.server.mapper.ReceiptMapper;
 import ru.redcode.server.repository.CategoryRepository;
@@ -32,6 +32,11 @@ import ru.redcode.server.repository.ProductRepository;
 import ru.redcode.server.repository.ReceiptRepository;
 import ru.redcode.server.repository.UserRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +55,7 @@ public class ReceiptService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CategorySummaryMapper categorySummaryMapper;
 
 
     @Transactional
@@ -122,6 +128,57 @@ public class ReceiptService {
         Sort sort = Sort.by(Sort.Direction.DESC, "date");
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return receiptRepository.findByUserIdAndRetailPlaceContainingIgnoreCase(userId, search, pageable);
+    }
+
+    public BigDecimal getTotalSum(Long userId) {
+        return receiptRepository.sumTotalByUser(userId);
+    }
+
+    @Transactional
+    public PeriodSummaryResponseDto getSummaryForPeriod(Long userId,
+                                                        LocalDate start,
+                                                        LocalDate end) {
+        LocalDateTime startTime = start.atStartOfDay();
+        LocalDateTime endTime = end.atStartOfDay();
+
+        List<Receipt> receipts = receiptRepository.findByUserIdAndDateBetween(userId, startTime, endTime);
+        BigDecimal sum = receiptRepository.sumTotalByUserAndPeriod(userId, startTime, endTime);
+
+        List<ReceiptResponseDto> responseDtos = receiptMapper.toDtoList(receipts);
+        return new PeriodSummaryResponseDto(sum, responseDtos);
+    }
+
+    @Transactional
+    public PeriodCategorySummaryResponseDto getCategorySummaryForPeriod(Long userId,
+                                                                        LocalDate start,
+                                                                        LocalDate end) {
+        LocalDateTime startTime = start.atStartOfDay();
+        LocalDateTime endTime   = end.atStartOfDay();
+
+        List<ProductRepository.CategorySum> sums =
+                productRepository.sumTotalByCategoryAndPeriod(userId, startTime, endTime);
+
+        BigDecimal total = sums.stream()
+                .map(ProductRepository.CategorySum::getSum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<CategorySummaryResponseDto> dtos = sums.stream()
+                .map(categorySummaryMapper::toDto)
+                .map(dto -> {
+                    BigDecimal pct = total.signum() == 0
+                            ? BigDecimal.ZERO
+                            : dto.getSum()
+                            .multiply(BigDecimal.valueOf(100))
+                            .divide(total, 2, RoundingMode.HALF_UP);
+                    return new CategorySummaryResponseDto(
+                            dto.getCategoryName(),
+                            dto.getSum(),
+                            pct
+                    );
+                })
+                .toList();
+
+        return new PeriodCategorySummaryResponseDto(total, dtos);
     }
 
 }

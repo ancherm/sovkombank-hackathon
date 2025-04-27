@@ -1,18 +1,26 @@
 package ru.redcode.server.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.redcode.server.dto.request.ReceiptRequestDto;
+import ru.redcode.server.dto.response.PeriodCategorySummaryResponseDto;
+import ru.redcode.server.dto.response.PeriodSummaryResponseDto;
 import ru.redcode.server.dto.response.ProductResponseDto;
 import ru.redcode.server.dto.response.ReceiptResponseDto;
 import ru.redcode.server.entity.Receipt;
 import ru.redcode.server.service.ReceiptService;
+import ru.redcode.server.utils.json.DateDeserializer;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,4 +58,31 @@ public class ReceiptController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/total")
+    public ResponseEntity<BigDecimal> getTotal(@RequestParam Long userId) {
+        log.info("Запрос на получение суммы трат пользователя с id: {}", userId);
+        return ResponseEntity.ok(receiptService.getTotalSum(userId));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<PeriodSummaryResponseDto> getSummary(
+            @RequestParam Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+
+        log.info("Запрос на подсчет трат с параметрами: userId {}, start {}, end {}", userId, start, end);
+        return ResponseEntity.ok(receiptService.getSummaryForPeriod(userId, start, end));
+    }
+
+    @GetMapping("/summary/categories")
+    public ResponseEntity<PeriodCategorySummaryResponseDto> getCategorySummary(
+            @RequestParam Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        PeriodCategorySummaryResponseDto dto =
+                receiptService.getCategorySummaryForPeriod(userId, start, end);
+        return ResponseEntity.ok(dto);
+    }
+
 }
