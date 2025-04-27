@@ -37,7 +37,12 @@ public class UserService {
         String hashPassword = BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt(12));
         user.setPasswordHash(hashPassword);
 
-        User savedUser = userRepository.save(user);
+        User savedUser;
+        try {
+            savedUser = userRepository.save(user);
+        } catch (Exception ex) {
+            throw new ServerException(USERNAME_ALREADY_EXISTS);
+        }
         log.info("Пользователь с username: {} сохранен с id: {}", savedUser.getUsername(), savedUser.getId());
 
         return userMapper.toDto(savedUser);

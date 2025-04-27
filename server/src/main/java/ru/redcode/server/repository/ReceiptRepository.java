@@ -23,7 +23,9 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
             "products.category",
             "products.user"
     })
-    List<Receipt> findAllByUserId(Long userId);
+    List<Receipt> findAllByUserIdOrderByDateDesc(Long userId);
+
+    Page<Receipt> findAllByUserId(Long userId, Pageable pageable);
 
     List<Receipt> findByUserIdAndDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
