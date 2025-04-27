@@ -6,18 +6,27 @@ import {useRouter} from "vue-router";
 import DownloadView from "@/views/DownloadView.vue";
 import {apiGetUser} from "@/api/endpoins/user.get.api.js";
 import StatisticsComponent from "@/components/StatisticsComponent.vue";
+import http from "@/api/http.js";
 
 const userId = localStorage.getItem('userId')
+let resTotalSum = ref(0)
 
 const userData = ref({
   userId: userId,
   username: '',
   avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
+  totalPrice: 0,
 })
 
 async function loadUserData(userId) {
   try {
     const user = await apiGetUser(userId);
+    await http.get(`/api/receipts/total?userId=${userId}`)
+        .then(response => {
+          resTotalSum.value = response;
+          userData.value.totalPrice = resTotalSum.value;
+          console.log(response.data);
+        });
     userData.value = {
       username: user.username,
       avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
@@ -27,8 +36,21 @@ async function loadUserData(userId) {
   }
 }
 
+async function loadTotalPrice(userId) {
+  try {
+    resTotalSum = await http.get(`/api/receipts/total?userId=${userId}`)
+    userData.value = {
+      totalPrice: resTotalSum
+    }
+    console.log(resTotalSum)
+  } catch (error) {
+    console.error('Ошибка при загрузке', error);
+  }
+}
+
 onMounted(() => {
   loadUserData(userId);
+  loadTotalPrice(userId);
 });
 
 
