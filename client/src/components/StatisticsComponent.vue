@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch, onUnmounted, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
+import axios from 'axios';
+import http from "@/api/http.js"; // <--- добавил axios
 
 Chart.register(...registerables);
 
@@ -9,29 +11,29 @@ const endDate = ref(new Date().toISOString().split('T')[0]);
 const data = ref(null);
 const loading = ref(false);
 
+
 const headers = [
   { title: 'Категория', key: 'categoryName' },
   { title: 'Сумма', key: 'sum' },
   { title: 'Доля, %', key: 'percentage' },
 ];
 
-const mockData = {
-  totalSum: 3409.96,
-  categories: [
-    { categoryName: 'Молочные продукты', sum: 229.99, percentage: 6.74 },
-    { categoryName: 'Мясо и рыба', sum: 3000.0, percentage: 87.98 },
-    { categoryName: 'Хлеб и выпечка', sum: 179.97, percentage: 5.28 },
-    { categoryName: 'Электроника и мелкая техника', sum: 0.0, percentage: 0.0 },
-  ],
-};
-
 const fetchData = async () => {
   loading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    data.value = mockData;
+    const response = await http.get('/api/receipts/summary/categories', {
+      params: {
+        userId: 1,
+        start: startDate.value,
+        end: endDate.value,
+      },
+    });
+
+    console.log(response)
+
+    data.value = response;
   } catch (error) {
-    console.error('Ошибка:', error);
+    console.error('Ошибка загрузки данных:', error);
   } finally {
     loading.value = false;
   }
@@ -93,7 +95,7 @@ watch(data, () => {
     try {
       createChart();
     } catch (error) {
-      console.error('Ошибка при перерисовывании диаграммы:', error);
+      console.error('Ошибка при перерисовке диаграммы:', error);
     }
   }
 });

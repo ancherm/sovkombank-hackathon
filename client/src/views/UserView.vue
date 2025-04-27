@@ -8,7 +8,7 @@ import {apiGetUser} from "@/api/endpoins/user.get.api.js";
 import StatisticsComponent from "@/components/StatisticsComponent.vue";
 
 const userData = ref({
-  userId: 1,
+  userId: localStorage.getItem('userId'),
   username: '',
   avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
 })
@@ -16,7 +16,6 @@ const userData = ref({
 async function loadUserData(userId) {
   try {
     const user = await apiGetUser(userId);
-    console.log("API RESPONSE", user)
     userData.value = {
       username: user.username,
       avatar: 'https://i.pinimg.com/1200x/1c/4b/3c/1c4b3c9bfee4f74fc762d9c576e330fb.jpg',
@@ -62,7 +61,7 @@ function goToPage(pageName) {
       </v-col>
       <!-- Правая колонка -->
       <v-col cols="7">
-        <ReceiptList :items-per-page="10" :userId="123" />
+        <ReceiptList :items-per-page="10" :userId="localStorage.getItem('userId')" />
       </v-col>
     </v-row>
   </v-container>

@@ -1,7 +1,7 @@
 <script setup>
-import {ref, computed, onMounted} from 'vue'
+import {ref, computed, onMounted, watch} from 'vue'
 import ReceiptComponent from "@/components/ReceiptComponent.vue"
-import {apiGetReceipts} from "@/api/endpoins/receipts.get.api.js"
+import {apiGetReceipts, apiGetReceiptsDontPagination} from "@/api/endpoins/receipts.get.api.js"
 
 // Пропсы
 const props = defineProps({
@@ -25,7 +25,7 @@ const isLoading = ref(false)  // Флаг загрузки
 // Функция для загрузки чеков
 function loadReceipts() {
   isLoading.value = true
-  apiGetReceipts(page.value, props.itemsPerPage, searchQuery.value, props.userId)  // Загружаем чеки с API или моков
+  apiGetReceiptsDontPagination(page.value, props.itemsPerPage, searchQuery.value, props.userId)
       .then(response => {
         receipts.value = response.receipts
         totalPages.value = response.pagination.totalPages
@@ -49,15 +49,11 @@ function onPageChange(newPage) {
   }
 }
 
-// Поиск локально по текущим чекам
-const filteredReceipts = computed(() => {
-  if (!searchQuery.value) {
-    return receipts.value
-  }
-  return receipts.value.filter(receipt =>
-      receipt.retailPlace.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
+watch(searchQuery, () => {
+  page.value = 1; // сбрасываем на первую страницу при новом поиске
+  loadReceipts()
 })
+
 
 </script>
 
@@ -76,7 +72,7 @@ const filteredReceipts = computed(() => {
 
     <!-- Список чеков -->
     <ReceiptComponent
-        v-for="receipt in filteredReceipts"
+        v-for="receipt in receipts"
         :key="receipt.retailPlace + receipt.date"
         :receipt-data="receipt"
     />
