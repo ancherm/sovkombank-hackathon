@@ -26,7 +26,7 @@ const login = async () => {
 
     localStorage.setItem('userId', userData.id);
 
-    await router.push('/users');
+    await router.push('/user');
   } catch (error) {
     console.error('Ошибка при входе:', error);
     errorMessage.value = 'Ошибка входа. Проверьте логин или пароль.';
