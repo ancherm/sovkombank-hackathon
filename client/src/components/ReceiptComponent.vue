@@ -31,9 +31,7 @@ function downloadImage() {
       </v-expansion-panel-title>
 
       <v-expansion-panel-text>
-        <!-- Строка: Фото слева, данные справа -->
         <v-row>
-          <!-- Фото -->
           <v-col cols="12" md="6" class="text-center">
             <v-img
                 v-if="recData.data"

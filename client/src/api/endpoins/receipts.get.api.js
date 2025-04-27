@@ -1,5 +1,3 @@
-// apiGetReceipts.js
-import tmpDataImage from "@/views/consts.js"
 import http from "@/api/http.js";
 
 export async function apiGetReceipts(page = 1, size = 10, searchQuery = '', userId) {

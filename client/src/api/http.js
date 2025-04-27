@@ -7,7 +7,6 @@ const http = axios.create({
     timeout: 10000,
 });
 
-// Интерцепторы
 http.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -20,7 +19,6 @@ http.interceptors.response.use(
     (response) => response.data,
     (error) => {
         if (error.response?.status === 401) {
-            // Логика для 401 ошибки
         }
         return Promise.reject(error);
     }
