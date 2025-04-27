@@ -3,12 +3,9 @@ import {ref, computed, onMounted, watch} from 'vue'
 import ReceiptComponent from "@/components/ReceiptComponent.vue"
 import {apiGetReceipts, apiGetReceiptsDontPagination} from "@/api/endpoins/receipts.get.api.js"
 
+const userId = localStorage.getItem('userId')
 // Пропсы
 const props = defineProps({
-  userId: {
-    type: Number,
-    required: true
-  },
   itemsPerPage: {
     type: Number,
     required: true
@@ -25,7 +22,7 @@ const isLoading = ref(false)  // Флаг загрузки
 // Функция для загрузки чеков
 function loadReceipts() {
   isLoading.value = true
-  apiGetReceiptsDontPagination(page.value, props.itemsPerPage, searchQuery.value, props.userId)
+  apiGetReceiptsDontPagination(page.value, props.itemsPerPage, searchQuery.value, userId)
       .then(response => {
         receipts.value = response.receipts
         totalPages.value = response.pagination.totalPages

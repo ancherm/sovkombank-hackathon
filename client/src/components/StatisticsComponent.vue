@@ -5,7 +5,7 @@ import axios from 'axios';
 import http from "@/api/http.js"; // <--- добавил axios
 
 Chart.register(...registerables);
-
+const userId = localStorage.getItem('userId')
 const startDate = ref(new Date().toISOString().split('T')[0]);
 const endDate = ref(new Date().toISOString().split('T')[0]);
 const data = ref(null);
@@ -23,7 +23,7 @@ const fetchData = async () => {
   try {
     const response = await http.get('/api/receipts/summary/categories', {
       params: {
-        userId: 1,
+        userId: userId,
         start: startDate.value,
         end: endDate.value,
       },
