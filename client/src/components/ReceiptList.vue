@@ -56,7 +56,6 @@ watch(searchQuery, () => {
 
 <template>
   <div>
-    <!-- Поле поиска -->
     <div class="mb-4">
       <v-text-field
           v-model="searchQuery"
@@ -74,9 +73,7 @@ watch(searchQuery, () => {
         :receipt-data="receipt"
     />
 
-    <!-- Пагинация -->
     <div class="text-center mt-4">
-      <!-- Спиннер загрузки -->
       <v-progress-circular
           v-if="isLoading"
           indeterminate
@@ -85,7 +82,6 @@ watch(searchQuery, () => {
           class="mb-4"
       />
 
-      <!-- Пагинация, только если не идёт загрузка -->
       <v-pagination
           v-if="!isLoading"
           v-model="page"

@@ -3,6 +3,7 @@ package ru.redcode.server.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,19 @@ public class ReceiptController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(receiptService.getAllReceipts(userId));
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<Page<ReceiptResponseDto>> listReceipts(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        if (userId < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+        Page<ReceiptResponseDto> receiptsPage = receiptService.getAllReceipts(userId, page, size);
+        return ResponseEntity.ok(receiptsPage);
     }
 
     @GetMapping("/total")

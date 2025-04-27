@@ -12,14 +12,12 @@ const loading = ref(false);
 const errorMessage = ref('');
 let receiptData = ref(null);
 
-// Snackbar
 const snackbar = ref({
   show: false,
   message: '',
   color: 'success',
 });
 
-// Функции
 const handleFileInput = async (event) => {
   resetError();
 
@@ -54,7 +52,7 @@ const readFileAsBase64 = (file) => {
       const result = e.target?.result;
       if (typeof result === 'string') {
         const base64String = `data:${file.type};base64,${result.split(',')[1]}`;
-        resolve(base64String); // Возвращаем полный base64
+        resolve(base64String);
       } else {
         reject();
       }
@@ -76,12 +74,10 @@ const sendData = async () => {
     const response = await uploadImage(userId, imageData.value);
     showSnackbar('Изображение успешно отправлено', 'success');
 
-    // Теперь обновляем реактивную переменную receiptData
     receiptData.value = response;
 
-    // Очищаем input после успешной отправки
     imageData.value = null;
-    previewUrl.value = null;  // Очищаем превью
+    previewUrl.value = null;
   } catch (err) {
     console.error('Ошибка отправки:', err);
     setError('Произошла ошибка при отправке');
@@ -127,14 +123,13 @@ function goToPage(pageName) {
       <template v-slot:append>
         <div class="d-flex ga-1">
           <v-btn icon @click="goToPage('user')">
-            <v-icon>mdi-account</v-icon>  <!-- Иконка "пользователь" -->
+            <v-icon>mdi-account</v-icon>
           </v-btn>
         </div>
       </template>
     </v-toolbar>
   </v-card>
 
-  <!-- Upload Form -->
   <v-container>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6">

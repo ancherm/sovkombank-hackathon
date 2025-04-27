@@ -25,7 +25,7 @@ services:
       - ./client:/app
       - /app/node_modules
     ports:
-      - "8888:8888"
+      - "3000:80"
     command: npm run dev
     networks:
       - main
@@ -40,11 +40,13 @@ services:
       - maven_cache:/root/.m2
     ports:
       - "8080:8080"
-    command: mvn spring-boot:run -Dspring-boot.run.fork=false
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - ".env-docker"
+#    command: mvn spring-boot:run -Dspring-boot.run.fork=false
+#    environment:
+#      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+#      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+#      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - postgres
     networks:
